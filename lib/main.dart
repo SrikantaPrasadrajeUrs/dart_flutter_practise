@@ -76,6 +76,8 @@ class _Demo1State extends State<Demo1> {
     );
   }
 
+  List<Widget> channels = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,28 +150,62 @@ class _Demo1State extends State<Demo1> {
             Text("Unread", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 17)),
             getRowWidget("https://media.istockphoto.com/id/1403500817/photo/the-craggies-in-the-blue-ridge-mountains.jpg?s=612x612&w=0&k=20&c=N-pGA8OClRVDzRfj_9AqANnOaDS3devZWwrQNwZuDSk=",
             "Peter", 2),
-            getRowWidget("https://static-cse.canva.com/blob/1911653/tools_transparent-background_promo-showcase_01-AFTER.jpg", "Bjorn", 1)
+            getRowWidget("https://static-cse.canva.com/blob/1911653/tools_transparent-background_promo-showcase_01-AFTER.jpg", "Bjorn", 1),
+            Divider(
+              indent: 10,
+              endIndent: 10,
+            ),
+            Text("Channels", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 17)),
+            SizedBox(height: 10),
+            Column(
+              children: channels,
+            ),
+            GestureDetector(
+                onTap: (){
+                  channels.add(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                                borderRadius: BorderRadius.circular(25),
+                                child: Image.network("https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg", height: 50, width: 50, fit: BoxFit.fill)),
+                            SizedBox(width: 10),
+                            Text("channel", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),),
+                            Spacer(),
+                          ],
+                        ),
+                      )
+                  );
+                  setState((){
+                    channels;
+                  });
+                },
+                child: Text("+ Add channels", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 17))),
           ]
         ),
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        onPressed: (){},
+        child: Container(
+          width: 70,
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.indigoAccent,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                blurRadius: 5,
+                spreadRadius: 3,
+                offset: Offset(1.4, 2)
+              )
+            ],
+            borderRadius: BorderRadius.circular(35)),
+          child: Center(child: Icon(Icons.edit, color: Colors.white, size: 15)),
+        ),
+      ),
     );
   }
 }
-
-////Column(
-//         children: [
-//           ExpansionTile(
-//               title: Text("Team Marketing"),
-//               children:[
-//                 Text("Branding"),
-//                 Text("Content stuff"),
-//                 Text("Digital"),
-//                 Text("Public regulations"),
-//                 Text("Seo activities"),
-//                 Text("Social media"),
-//                 Text("strategists"),
-//                 Text("Flutter"),
-//               ]
-//           )
-//         ],
-//       )
