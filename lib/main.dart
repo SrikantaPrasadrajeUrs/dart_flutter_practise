@@ -76,6 +76,57 @@ class _Demo1State extends State<Demo1> {
     );
   }
 
+  Widget getChannel(String imageUrl, String channelName){
+    return  Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: Image.network(imageUrl, height: 50, width: 50, fit: BoxFit.fill)),
+          SizedBox(width: 10),
+          Text(channelName, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),),// name
+          Spacer(),
+        ],
+      ),
+    );
+  }
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController imageUrlController = TextEditingController();
+
+  void showPopUp(){
+    showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: Text("Add Channels"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  hintText: "Channel Name"
+                ),
+              ),
+              TextField(
+                controller: imageUrlController,
+                decoration: InputDecoration(
+                    hintText: "image url"
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    ).whenComplete((){
+      setState(()=>channels.add(getChannel(imageUrlController.text, nameController.text)));
+      nameController.clear();
+      imageUrlController.clear();
+    });
+  }
+
   List<Widget> channels = [];
 
   @override
@@ -157,29 +208,14 @@ class _Demo1State extends State<Demo1> {
             ),
             Text("Channels", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 17)),
             SizedBox(height: 10),
-            Column(
-              children: channels,
+            SingleChildScrollView(
+              child: Column(
+                children: channels,
+              ),
             ),
             GestureDetector(
                 onTap: (){
-                  channels.add(
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                                borderRadius: BorderRadius.circular(25),
-                                child: Image.network("https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg", height: 50, width: 50, fit: BoxFit.fill)),
-                            SizedBox(width: 10),
-                            Text("channel", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),),
-                            Spacer(),
-                          ],
-                        ),
-                      )
-                  );
-                  setState((){
-                    channels;
-                  });
+                  showPopUp();
                 },
                 child: Text("+ Add channels", style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w400, fontSize: 17))),
           ]
