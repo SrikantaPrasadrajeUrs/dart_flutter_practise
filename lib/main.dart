@@ -1,15 +1,9 @@
+import 'package:first_project/ui_clone/channel_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp()); // this widget will be displayed in ui
 }
-
-// Stateless and Stateful Widgets
-// Android and ios
-// Material design for android
-// Cupertino design for ios
-
-// if a class extends to either stateful or stateless widget then it is called widget
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -77,17 +71,26 @@ class _Demo1State extends State<Demo1> {
   }
 
   Widget getChannel(String imageUrl, String channelName){
-    return  Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          ClipRRect(
-              borderRadius: BorderRadius.circular(25),
-              child: Image.network(imageUrl, height: 50, width: 50, fit: BoxFit.fill)),
-          SizedBox(width: 10),
-          Text(channelName, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),),// name
-          Spacer(),
-        ],
+    return  GestureDetector(
+      onTap: (){
+        // Navigator
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ChannelPage(
+          channelName: channelName,
+          imageUrl: imageUrl,
+        )));
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: Image.network(imageUrl, height: 50, width: 50, fit: BoxFit.fill)),
+            SizedBox(width: 10),
+            Text(channelName, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),),// name
+            Spacer(),
+          ],
+        ),
       ),
     );
   }
@@ -121,7 +124,9 @@ class _Demo1State extends State<Demo1> {
         );
       }
     ).whenComplete((){
-      setState(()=>channels.add(getChannel(imageUrlController.text, nameController.text)));
+      setState(()=>channels.add(
+          getChannel(imageUrlController.text, nameController.text)
+      ));
       nameController.clear();
       imageUrlController.clear();
     });
