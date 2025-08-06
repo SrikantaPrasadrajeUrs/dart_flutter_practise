@@ -10,9 +10,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final instance = FirebaseFirestore.instance;
-
+  CollectionReference<Map<String, dynamic>> get notes => instance.collection("notes");
   Stream<List> getNotes(){
-    final notes = instance.collection("notes");
+
     // map -> Iterable - Modify each element
     return notes.snapshots().map(
             (snapshot)=>snapshot.docs.map((doc){
@@ -21,7 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
+  void deleteNote(String noteId)async{
+    await notes.doc(noteId).delete();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, snapshot){
             if(snapshot.hasData){
               return ListView.builder(
-                  itemCount: snapshot.data!.length,
+                  itemCount: snapshot.data!.length, // list
                   itemBuilder: (context, index){
                     return Container(
                       margin: const EdgeInsets.all(10),
@@ -52,6 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]
                       ),
                       child: ListTile(
+                        onLongPress: (){
+                          // snapshot.data list -> index -note .id
+                          deleteNote(snapshot.data![index]['id']);
+                        },
                         title: Text(snapshot.data![index]["title"]),
                         subtitle: Text(snapshot.data![index]["content"]),
                       ),
@@ -66,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// c u d
+// C R U D
 
 
 ///
