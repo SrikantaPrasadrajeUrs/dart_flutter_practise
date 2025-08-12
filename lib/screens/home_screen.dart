@@ -9,6 +9,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // map -> Iterable - Modify each element
     return notes.snapshots().map(
             (snapshot)=>snapshot.docs.map((doc){
-              return doc.data();// Map -> key:value
+              return doc.data()..['id'] = doc.id;// Map -> key:value
             }).toList()
     );
   }
@@ -35,10 +36,99 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // flutter -> db
   void addNote(String title, String content){
+    print("title: $title, content: $content");
+    ///content
+    // "Given a signed 32-bit integer x, return x with its digit"
+    // (string)
+    //
+    //
+    // createdAt
+    // 14 August 2025 at 22:29:25 UTC+5:30
+    // (timestamp)
+    //
+    //
+    // id
+    // "zt3E0EtGoBo4iMaHmiJo"
+    // (string)
+    //
+    //
+    // isPinned
+    // false
+    // (Boolean)
+    //
+    //
+    // lastModifiedAt
+    // 27 August 2025 at 00:00:00 UTC+5:30
+    // (timestamp)
+    //
+    //
+    // title
+    // "Second note"
+    // (string)
+    //
+    //
+    // userId
+    // "EsU9yqVK5TSYs0xCWpTL7DeQJke2"
+    notes.add({
+      "title": title,
+      "content": content,
+      "createdAt": DateTime.now(),
+      "lastModifiedAt": DateTime.now(),
+      "isPinned": false,
+      "userId": "EsU9yqVK5TSYs0xCWpTL7DeQJke2"
+    });
+    Navigator.pop(context);
+  }
 
+  void updateNote(String id, String title, String content){
+      notes.doc(id).update({
+        "title": title,
+        "content": content,
+        "createdAt": DateTime.now(),
+        "lastModifiedAt": DateTime.now(),
+        "isPinned": false,
+        "userId": "EsU9yqVK5TSYs0xCWpTL7DeQJke2",
+      });
+  }
+
+  void showPopUpdate(String noteId, String title, String content){
+    titleController.text = title;
+    contentController.text = content;
+    showDialog(
+        context: context,
+        builder:(context)=>
+            AlertDialog(
+              title: const Text("Update note"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    decoration: InputDecoration(
+                        hintText: "Enter title"
+                    ),
+                    controller: titleController,
+                  ),
+                  TextField(
+                    decoration: InputDecoration(
+                        hintText: "Enter content"
+                    ),
+                    controller: contentController,
+                  ),
+                  ElevatedButton(
+                      onPressed: (){
+                        updateNote(noteId, titleController.text, contentController.text);
+                      },
+                      child: Text("Update")
+                  )
+                ],
+              ),
+            )
+    );
   }
 
   void showPop(){
+    titleController.clear();
+    contentController.clear();
     showDialog(
       context: context,
       builder:(context)=>
@@ -57,14 +147,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: InputDecoration(
                       hintText: "Enter content"
                   ),
+                  controller: contentController,
+                ),
+                ElevatedButton(
+                    onPressed: (){
+                      addNote(titleController.text, contentController.text);
+                    },
+                    child: Text("Add")
                 )
               ],
             ),
           )
-    ).whenComplete((){
-      print(titleController.text);
-    });
-
+    );
   }
 
   @override
@@ -96,6 +190,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]
                       ),
                       child: ListTile(
+                        onTap: (){
+                          showPopUpdate(snapshot.data![index]['id'], snapshot.data![index]["title"], snapshot.data![index]["content"]);
+                        },
                         onLongPress: (){
                           // snapshot.data list -> index -note .id
                           deleteNote(snapshot.data![index]['id']);
