@@ -17,10 +17,9 @@ class _HomeScreenState extends State<HomeScreen> {
   CollectionReference<Map<String, dynamic>> get notes => instance.collection("notes");
 
   Stream<List> getNotes(){
-    // map -> Iterable - Modify each element
     return notes.snapshots().map(
             (snapshot)=>snapshot.docs.map((doc){
-              return doc.data()..['id'] = doc.id;// Map -> key:value
+              return doc.data()..['id'] = doc.id;
             }).toList()
     );
   }
@@ -224,3 +223,11 @@ class _HomeScreenState extends State<HomeScreen> {
 ///
 /// List -> map method, forEach method, where method
 /// ?? ??= ! , variable?.data, spread operator, ...?List
+///
+///
+
+/// Login register
+/// biometric authentication
+/// image update, camera access
+/// supabase - base
+/// animations

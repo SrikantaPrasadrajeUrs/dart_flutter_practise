@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:first_project/screens/home_screen.dart';
+import 'package:first_project/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorSchemeSeed: Colors.indigoAccent
       ),
-      home: const HomeScreen(),
+      home: const WelcomeScreen(),
     );
   }
 }
