@@ -13,15 +13,27 @@ class _RegisterState extends State<Register> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void register() {
+  void register() async{
     print(
       "email: ${emailController.text}, password: ${passwordController.text}",
     );
     final instance = FirebaseAuth.instance;
-    instance.signInWithEmailAndPassword(
+    await instance.createUserWithEmailAndPassword(
       email: emailController.text,
       password: passwordController.text,
     );
+  }
+
+  void login()async{
+    print(
+      "email: ${emailController.text}, password: ${passwordController.text}",
+    );
+    final instance = FirebaseAuth.instance;
+    final user = await instance.signInWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+    print("logged in successfully $user");
   }
 
   @override
