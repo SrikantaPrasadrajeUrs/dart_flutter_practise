@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_project/repository/notes_repo.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 
@@ -10,19 +11,9 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final AuthRepo authRepo = AuthRepo();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  void register() async{
-    print(
-      "email: ${emailController.text}, password: ${passwordController.text}",
-    );
-    final instance = FirebaseAuth.instance;
-    await instance.createUserWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    );
-  }
 
   void login()async{
     print(
@@ -53,7 +44,7 @@ class _RegisterState extends State<Register> {
               backgroundColor: Colors.indigo,
               textStyle: TextStyle(color: Colors.white),
               text: "Register",
-              onPressed: register,
+              onPressed: ()=>authRepo.createUser(emailController.text, passwordController.text),
             ),
           ],
         ),
