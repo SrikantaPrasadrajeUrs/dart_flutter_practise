@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
   final Color backgroundColor;
-  final String text;
+  final Color? borderColor;
+  final String? text;
+  final String? imagePath;
   final double width;
   final double height;
   final TextStyle textStyle;
   final VoidCallback? onPressed; // void function(){}
-  const Button({super.key,
+
+  const Button({
+    super.key,
+    this.borderColor,
+    this.imagePath,
     required this.backgroundColor,
     required this.textStyle,
     this.onPressed,
-    required this.text,
+    this.text,
     this.width = 150,
     this.height = 50});
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +32,9 @@ class Button extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: backgroundColor,
-          border: Border.all(color: Colors.indigoAccent)
+          border: Border.all(color: borderColor??Colors.indigoAccent)
         ),
-        child: Center(child: Text(text, style: textStyle,)),
+        child: Center(child: text!=null?Text(text!, style: textStyle,):Image.asset(imagePath!, width: 20, height: 20,)),
       ),
     );
   }
