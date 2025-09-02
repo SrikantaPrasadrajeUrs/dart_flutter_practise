@@ -34,7 +34,7 @@ class Button extends StatelessWidget {
           color: backgroundColor,
           border: Border.all(color: borderColor??Colors.indigoAccent)
         ),
-        child: Center(child: text!=null?Text(text!, style: textStyle,):Image.asset(imagePath!, width: 20, height: 20,)),
+        child: Center(child: text!=null?Text(text!, style: textStyle,):Image.asset(imagePath!, width: 25, height: 25,)),
       ),
     );
   }

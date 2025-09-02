@@ -12,11 +12,37 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+
   final AuthRepo authRepo = AuthRepo();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void login()async{
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  void register(){
+    if(formKey.currentState!.validate()){
+
+    }
+  }
+
+  String? validate(String? str, {String fieldType = "email"}){
+    if(str == null || str.isEmpty){
+      return "$fieldType is required";
+    }
+    if(fieldType == "email"){
+      if(!str.contains("@")){
+        return "Invalid $fieldType";
+      }
+    }
+    if(fieldType == "password"){
+      if(str.length < 6){
+        return "Password must be at least 6 characters";
+      }
+    }
+    return null;
+  }
+
+  void login() async {
     print(
       "email: ${emailController.text}, password: ${passwordController.text}",
     );
@@ -34,77 +60,121 @@ class _RegisterState extends State<Register> {
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Spacer(
-              flex: 3,
-            ),
-            Text("Create a account", style: GoogleFonts.quicksand(fontSize: 29, fontWeight: FontWeight.bold),),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Already have and account? ", style: GoogleFonts.quicksand(fontSize: 14, color: Colors.black87)),
-                Text("Login", style: GoogleFonts.quicksand(fontSize: 14, color: Colors.indigoAccent))
-              ],
-            ),
-            Spacer(),
-            TextFormField(controller: emailController, decoration: InputDecoration(
-              hintText: "Email address"
-            ),),
-            SizedBox(height: 30,),
-            TextFormField(controller: passwordController, decoration: InputDecoration(
-              hintText: "Password",
-              suffixIcon: Icon(Icons.remove_red_eye_outlined, color: Colors.black38,)
-            )),
-            SizedBox(height: 10,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text("Recovery Password", style: GoogleFonts.quicksand(fontSize: 14, color: Colors.black38, fontWeight: FontWeight.w600)),
-              ],
-            ),
-            SizedBox(height: 20),
-            Button(
-              width: double.infinity,
-              backgroundColor: Colors.indigoAccent,
-              textStyle: GoogleFonts.quicksand(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-              text: "Continue",
-              onPressed: ()=>authRepo.createUser(emailController.text, passwordController.text),
-            ),
-            Spacer(),
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    color: Colors.grey,
-                    endIndent: 10,
+        child: Form(
+          key: formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Spacer(flex: 3),
+              Text(
+                "Create a account",
+                style: GoogleFonts.quicksand(
+                  fontSize: 29,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have and account? ",
+                    style: GoogleFonts.quicksand(
+                      fontSize: 14,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  Text(
+                    "Login",
+                    style: GoogleFonts.quicksand(
+                      fontSize: 14,
+                      color: Colors.indigoAccent,
+                    ),
+                  ),
+                ],
+              ),
+              Spacer(),
+              TextFormField(
+                controller: emailController,
+                validator: (str)=>validate(str,fieldType:"email"),
+                decoration: InputDecoration(hintText: "Email address"),
+              ),
+              SizedBox(height: 30),
+              TextFormField(
+                controller: passwordController,
+                validator: (str)=>validate(str,fieldType: "password"),
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: "Password",
+                  suffixIcon: Icon(
+                    Icons.remove_red_eye_outlined,
+                    color: Colors.black38,
                   ),
                 ),
-                Text("or sign up with"),
-                Expanded(
-                  child: Divider(
-                    indent: 10,
-                    color: Colors.grey,
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "Recovery Password",
+                    style: GoogleFonts.quicksand(
+                      fontSize: 14,
+                      color: Colors.black38,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                )
-              ],
-            ),
-            Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Button(
+                ],
+              ),
+              SizedBox(height: 20),
+              Button(
+                width: double.infinity,
+                backgroundColor: Colors.indigoAccent,
+                textStyle: GoogleFonts.quicksand(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                text: "Continue",
+                onPressed: register,
+              ),
+              Spacer(),
+              Row(
+                children: [
+                  Expanded(child: Divider(color: Colors.grey, endIndent: 10)),
+                  Text("or sign up with"),
+                  Expanded(child: Divider(indent: 10, color: Colors.grey)),
+                ],
+              ),
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Button(
                     borderColor: Colors.grey.shade400,
-                    width: 100,backgroundColor: Colors.white, textStyle: TextStyle(color: Colors.black), imagePath: "assets/images/welcome.jpg"),
-                Button(borderColor: Colors.grey.shade400,width: 100,backgroundColor: Colors.white, textStyle: TextStyle(color: Colors.black), imagePath: "assets/images/welcome.jpg"),
-                Button(borderColor: Colors.grey.shade400,width: 100,backgroundColor: Colors.white, textStyle: TextStyle(color: Colors.black), imagePath: "assets/images/welcome.jpg")
-              ],
-            ),
-            Spacer(
-              flex: 6,
-            )
-          ],
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    textStyle: TextStyle(color: Colors.black),
+                    imagePath: "assets/images/google.png",
+                  ),
+                  Button(
+                    borderColor: Colors.grey.shade400,
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    textStyle: TextStyle(color: Colors.black),
+                    imagePath: "assets/images/apple.png",
+                  ),
+                  Button(
+                    borderColor: Colors.grey.shade400,
+                    width: 100,
+                    backgroundColor: Colors.white,
+                    textStyle: TextStyle(color: Colors.black),
+                    imagePath: "assets/images/facebook.png",
+                  ),
+                ],
+              ),
+              Spacer(flex: 6),
+            ],
+          ),
         ),
       ),
     );
