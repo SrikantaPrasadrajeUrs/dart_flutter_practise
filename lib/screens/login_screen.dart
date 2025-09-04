@@ -1,29 +1,36 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/repository/auth_repo.dart';
-import 'package:first_project/screens/login_screen.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Register extends StatefulWidget {
-  const Register({super.key});
+class Login extends StatefulWidget {
+  final String email;
+  final String password;
+  const Login({super.key, required this.email, required this.password});
 
   @override
-  State<Register> createState() => _RegisterState();
+  State<Login> createState() => _LoginState();
 }
 
-class _RegisterState extends State<Register> {
+class _LoginState extends State<Login> {
 
   final AuthRepo authRepo = AuthRepo();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  void register()async{
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController(text: widget.email);
+    passwordController = TextEditingController(text: widget.password);
+  }
+
+  void login()async{
     if(formKey.currentState!.validate()){
-      await authRepo.register(email: emailController.text, password: passwordController.text);
-      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Login(email: emailController.text, password: passwordController.text)));
+      await authRepo.login(email: emailController.text, password: passwordController.text);
+      print("Successfully logged in");
     }
   }
 
@@ -44,7 +51,7 @@ class _RegisterState extends State<Register> {
     return null;
   }
 
-  void login() async {
+  void login1() async {
     print(
       "email: ${emailController.text}, password: ${passwordController.text}",
     );
@@ -69,7 +76,7 @@ class _RegisterState extends State<Register> {
             children: [
               Spacer(flex: 3),
               Text(
-                "Create a account",
+                "Sign in",
                 style: GoogleFonts.quicksand(
                   fontSize: 29,
                   fontWeight: FontWeight.bold,
@@ -79,14 +86,14 @@ class _RegisterState extends State<Register> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Already have and account? ",
+                    "don't have a account? ",
                     style: GoogleFonts.quicksand(
                       fontSize: 14,
                       color: Colors.black87,
                     ),
                   ),
                   Text(
-                    "Login",
+                    "Sign up",
                     style: GoogleFonts.quicksand(
                       fontSize: 14,
                       color: Colors.indigoAccent,
@@ -137,7 +144,7 @@ class _RegisterState extends State<Register> {
                   color: Colors.white,
                 ),
                 text: "Continue",
-                onPressed: register,
+                onPressed: login,
               ),
               Spacer(),
               Row(
