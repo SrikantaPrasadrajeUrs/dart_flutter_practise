@@ -3,6 +3,7 @@ import 'package:first_project/repository/auth_repo.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'home_screen.dart';
 
 class Login extends StatefulWidget {
   final String email;
@@ -29,8 +30,10 @@ class _LoginState extends State<Login> {
 
   void login()async{
     if(formKey.currentState!.validate()){
-      await authRepo.login(email: emailController.text, password: passwordController.text);
-      print("Successfully logged in");
+      final isLoggedIn = await authRepo.login(email: emailController.text, password: passwordController.text);
+      if(isLoggedIn){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
+      }
     }
   }
 

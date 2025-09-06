@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_project/repository/notes_repo.dart';
 import 'package:flutter/material.dart';
+
+import '../repository/auth_repo.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,20 +12,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
+  final _notesRepo = NotesRepo();
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
   final instance = FirebaseFirestore.instance;
   CollectionReference<Map<String, dynamic>> get notes => instance.collection("notes");
-
-  Stream<List> getNotes(){
-    return notes.snapshots().map(
-            (snapshot)=>snapshot.docs.map((doc){
-              return doc.data()..['id'] = doc.id;
-            }).toList()
-    );
-  }
 
   @override
   void initState() {
@@ -169,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text("Notes app"),
       ),
       body: StreamBuilder<List>(
-          stream: getNotes(),
+          stream: _notesRepo.getNotes(),
           builder: (context, snapshot){
             if(snapshot.hasData){
               return ListView.builder(

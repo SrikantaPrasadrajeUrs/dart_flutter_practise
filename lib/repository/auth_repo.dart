@@ -8,7 +8,7 @@ class AuthRepo{
     return await _authService.createUser(email, password);
   }
 
-  Future<void> login({required String email, required String password})async{
+  Future<bool> login({required String email, required String password})async{
     return await _authService.signIn(email, password);
   }
 }
