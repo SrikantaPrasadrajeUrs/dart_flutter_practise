@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/repository/notes_repo.dart';
 import 'package:flutter/material.dart';
 
-import '../repository/auth_repo.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
