@@ -1,8 +1,11 @@
+import 'package:first_project/screens/home_screen.dart';
 import 'package:first_project/screens/register.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
+
+import '../core/service/biometric_service.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -12,17 +15,15 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  final auth = LocalAuthentication();
+  final BiometricService bioMetricService = BiometricService();
 
   @override
   void initState() {
-
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_)async{
-      bool a = await auth.canCheckBiometrics;
-      bool b = await auth.isDeviceSupported();
-      if(a&b){
-        await auth.authenticate(localizedReason: "Let OS determine authentication method");
+      final isAuthenticated = await bioMetricService.authenticate();
+      if(isAuthenticated){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
       }
     });
   }
