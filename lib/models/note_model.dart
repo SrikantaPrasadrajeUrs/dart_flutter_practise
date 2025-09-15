@@ -17,5 +17,31 @@ class NoteModel {
     required this.isPinned,
     required this.userId,
   });
+  // Model ->
+  Map<String,dynamic> toMap(){
+    return {
+      "id": id,
+      "content": content,
+      "title": title,
+      "createdAt": createdAt,
+      "lastModifiedAt": lastModifiedAt,
+      "isPinned": isPinned,
+      "userId": userId,
+    };
+  }
 
+  static NoteModel fromMap(Map<String,dynamic> map){
+    return NoteModel(
+      id: map['id'],
+      content: map['content'],
+      title: map['title'],
+      createdAt: map['createdAt'],
+      lastModifiedAt: map['lastModifiedAt'],
+      isPinned: map['isPinned'],
+      userId: map['userId'],
+    );
+  }
 }
+
+// service -> db Model -> map
+// db - service map -> Model
