@@ -1,8 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/note_model.dart';
-
 class NotesService{
     final database = FirebaseFirestore.instance;
     CollectionReference<Map<String, dynamic>> get notes => database.collection("notes");
@@ -10,15 +8,15 @@ class NotesService{
       return notes.snapshots();
     }
 
-    void addNote(NoteModel note){
-      notes.add(note.toMap());
+    Future<void> addNote(Map<String,dynamic> note)async{
+      await notes.add(note);
     }
 
-    void updateNote(NoteModel note){
-      notes.doc(note.id).update(note.toMap());
+    void updateNote(String noteId, Map<String,dynamic> note){
+      notes.doc(noteId).update(note);
     }
 
-    void deleteNote(NoteModel note){
-      notes.doc(note.id).delete();
+    void deleteNote(String noteId){
+      notes.doc(noteId).delete();
     }
 }

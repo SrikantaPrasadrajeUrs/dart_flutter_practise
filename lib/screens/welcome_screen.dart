@@ -3,8 +3,6 @@ import 'package:first_project/screens/register.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:local_auth/local_auth.dart';
-
 import '../core/service/biometric_service.dart';
 
 class WelcomeScreen extends StatefulWidget {

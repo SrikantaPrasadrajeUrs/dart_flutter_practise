@@ -18,9 +18,8 @@ class NoteModel {
     required this.userId,
   });
   // Model ->
-  Map<String,dynamic> toMap(){
-    return {
-      "id": id,
+  Map<String,dynamic> toMap({bool excludeId = false}){
+    final map = {
       "content": content,
       "title": title,
       "createdAt": createdAt,
@@ -28,6 +27,8 @@ class NoteModel {
       "isPinned": isPinned,
       "userId": userId,
     };
+    if(excludeId==false) map['id'] = id;
+    return map;
   }
 
   static NoteModel fromMap(Map<String,dynamic> map){

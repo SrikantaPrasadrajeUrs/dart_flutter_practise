@@ -2,7 +2,9 @@ import 'package:first_project/core/service/notes_service.dart';
 import '../models/note_model.dart';
 
 class NotesRepo {
-  final _notesService = NotesService();
+  final NotesService _notesService;
+
+  NotesRepo({required NotesService notesService}):_notesService=notesService;
 
   Stream<List<NoteModel>> getNotes() {
     return _notesService.getNotes().map(
@@ -15,34 +17,32 @@ class NotesRepo {
   }
 
   void addNote({
-    required String uid,
     required String title,
     required String content,
     required bool isPinned,
     required String userId
-  }) {
-    return _notesService.addNote(
-      NoteModel(
-        id: uid,
-        content: content,
-        title: title,
-        createdAt: DateTime.now(),
-        lastModifiedAt: DateTime.now(),
-        isPinned: isPinned,
-        userId: userId,
-      ),
+  }) async{
+    NoteModel note = NoteModel(
+      id: '',
+      content: content,
+      title: title,
+      createdAt: DateTime.now(),
+      lastModifiedAt: DateTime.now(),
+      isPinned: isPinned,
+      userId: userId,
     );
+    await _notesService.addNote(note.toMap(excludeId: true));
   }
 
   void update({
     required NoteModel note
   }) {
-    return _notesService.updateNote(note);
+    return _notesService.updateNote(note.id,note.toMap());
   }
 
   void delete({
     required NoteModel note
   }) {
-    return _notesService.deleteNote(note);
+    return _notesService.deleteNote(note.id);
   }
 }

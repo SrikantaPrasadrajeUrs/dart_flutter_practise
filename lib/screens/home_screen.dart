@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_project/models/note_model.dart';
 import 'package:first_project/repository/notes_repo.dart';
 import 'package:flutter/material.dart';
+
+import '../core/service/notes_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _notesRepo = NotesRepo();
+  late final NotesRepo notesRepo;
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
@@ -20,68 +23,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    notesRepo = NotesRepo(notesService: NotesService());
   }
 
-  void deleteNote(String noteId)async{
-    await notes.doc(noteId).delete();
+  void addNote(String title, String content, bool isPinned){
+    notesRepo.addNote(title: title, content: content, isPinned: isPinned, userId: '');
   }
 
-  // flutter -> db
-  void addNote(String title, String content){
-    print("title: $title, content: $content");
-    ///content
-    // "Given a signed 32-bit integer x, return x with its digit"
-    // (string)
-    //
-    //
-    // createdAt
-    // 14 August 2025 at 22:29:25 UTC+5:30
-    // (timestamp)
-    //
-    //
-    // id
-    // "zt3E0EtGoBo4iMaHmiJo"
-    // (string)
-    //
-    //
-    // isPinned
-    // false
-    // (Boolean)
-    //
-    //
-    // lastModifiedAt
-    // 27 August 2025 at 00:00:00 UTC+5:30
-    // (timestamp)
-    //
-    //
-    // title
-    // "Second note"
-    // (string)
-    //
-    //
-    // userId
-    // "EsU9yqVK5TSYs0xCWpTL7DeQJke2"
-    notes.add({
-      "title": title,
-      "content": content,
-      "createdAt": DateTime.now(),
-      "lastModifiedAt": DateTime.now(),
-      "isPinned": false,
-      "userId": "EsU9yqVK5TSYs0xCWpTL7DeQJke2"
-    });
-    Navigator.pop(context);
-  }
+  void updateNote(){}
 
-  void updateNote(String id, String title, String content){
-      notes.doc(id).update({
-        "title": title,
-        "content": content,
-        "createdAt": DateTime.now(),
-        "lastModifiedAt": DateTime.now(),
-        "isPinned": false,
-        "userId": "EsU9yqVK5TSYs0xCWpTL7DeQJke2",
-      });
-  }
+  void deleteNote(){}
 
   void showPopUpdate(String noteId, String title, String content){
     titleController.text = title;
@@ -108,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   ElevatedButton(
                       onPressed: (){
-                        updateNote(noteId, titleController.text, contentController.text);
+                        updateNote(titleController.text, contentController.text, isPinned);
                       },
                       child: Text("Update")
                   )
@@ -143,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 ElevatedButton(
                     onPressed: (){
-                      addNote(titleController.text, contentController.text);
+                      addNote(titleController.text, contentController.text, );
                     },
                     child: Text("Add")
                 )
@@ -161,13 +112,14 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.orange,
         title: const Text("Notes app"),
       ),
-      body: StreamBuilder<List>(
+      body: StreamBuilder<List<NoteModel>>(
           stream: _notesRepo.getNotes(),
           builder: (context, snapshot){
             if(snapshot.hasData){
               return ListView.builder(
                   itemCount: snapshot.data!.length, // list
                   itemBuilder: (context, index){
+                    NoteModel note = snapshot.data![index];
                     return Container(
                       margin: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -183,14 +135,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: ListTile(
                         onTap: (){
-                          showPopUpdate(snapshot.data![index]['id'], snapshot.data![index]["title"], snapshot.data![index]["content"]);
+                          showPopUpdate(note.id, note.title, note.content);
                         },
                         onLongPress: (){
-                          // snapshot.data list -> index -note .id
-                          deleteNote(snapshot.data![index]['id']);
+                          deleteNote(note.id);
                         },
-                        title: Text(snapshot.data![index]["title"]),
-                        subtitle: Text(snapshot.data![index]["content"]),
+                        title: Text(note.title),
+                        subtitle: Text(note.content),
                       ),
                     );
                   }
