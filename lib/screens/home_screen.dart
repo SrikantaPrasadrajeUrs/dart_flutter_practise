@@ -26,22 +26,24 @@ class _HomeScreenState extends State<HomeScreen> {
     notesRepo = NotesRepo(notesService: NotesService());
   }
 
-  void addNote(String title, String content, bool isPinned){
+  void addNote(String title, String content, [bool isPinned = false]){
     notesRepo.addNote(title: title, content: content, isPinned: isPinned, userId: '');
   }
 
-  void updateNote(){}
+  void updateNote(NoteModel noteModel){
+    notesRepo.update(note:noteModel);
+  }
 
-  void deleteNote(){}
+  void deleteNote(NoteModel noteModel)=>notesRepo.delete(note: noteModel);
 
-  void showPopUpdate(String noteId, String title, String content){
-    titleController.text = title;
-    contentController.text = content;
+  void addOrUpdateNote({NoteModel? noteModel, String actionType = "ADD"}){
+    titleController.text = noteModel?.title??"";
+    contentController.text = noteModel?.content??"";
     showDialog(
         context: context,
         builder:(context)=>
             AlertDialog(
-              title: const Text("Update note"),
+              title: Text("$actionType note"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -59,48 +61,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   ElevatedButton(
                       onPressed: (){
-                        updateNote(titleController.text, contentController.text, isPinned);
+                          if(actionType == "ADD"){
+                            addNote(titleController.text, contentController.text);
+                          }else{
+                            if(noteModel==null) return;
+                              noteModel = noteModel!.copyWith(title: titleController.text, content: contentController.text);
+                              updateNote(noteModel!);
+                          }
                       },
-                      child: Text("Update")
+                      child: Text(actionType)
                   )
                 ],
               ),
             )
-    );
-  }
-
-  void showPop(){
-    titleController.clear();
-    contentController.clear();
-    showDialog(
-      context: context,
-      builder:(context)=>
-          AlertDialog(
-            title: const Text("Add note"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: "Enter title"
-                  ),
-                  controller: titleController,
-                ),
-                TextField(
-                  decoration: InputDecoration(
-                      hintText: "Enter content"
-                  ),
-                  controller: contentController,
-                ),
-                ElevatedButton(
-                    onPressed: (){
-                      addNote(titleController.text, contentController.text, );
-                    },
-                    child: Text("Add")
-                )
-              ],
-            ),
-          )
     );
   }
 
@@ -113,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text("Notes app"),
       ),
       body: StreamBuilder<List<NoteModel>>(
-          stream: _notesRepo.getNotes(),
+          stream: notesRepo.getNotes(),
           builder: (context, snapshot){
             if(snapshot.hasData){
               return ListView.builder(
@@ -134,11 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ]
                       ),
                       child: ListTile(
-                        onTap: (){
-                          showPopUpdate(note.id, note.title, note.content);
-                        },
+                        onTap: ()=>addOrUpdateNote(noteModel: note, actionType: "UPDATE"),
                         onLongPress: (){
-                          deleteNote(note.id);
+                          deleteNote(note);
                         },
                         title: Text(note.title),
                         subtitle: Text(note.content),
@@ -152,9 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orange,
-        onPressed: () {
-          showPop();
-        },
+        onPressed: () => addOrUpdateNote(),
         child: Icon(Icons.add, color: Colors.black.withValues(alpha: .5)),
       )
     );

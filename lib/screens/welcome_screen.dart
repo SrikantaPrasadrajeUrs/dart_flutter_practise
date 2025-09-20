@@ -4,6 +4,7 @@ import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/service/biometric_service.dart';
+import 'login_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -24,6 +25,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
       }
     });
+  }
+
+  void navigateToLogin(){
+    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Login(email: '',)));
   }
 
   @override
@@ -86,6 +91,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       color: Colors.indigoAccent,
                       fontSize: 14,
                     ),
+                    onPressed: navigateToLogin,
                   ),
                 ],
               ),

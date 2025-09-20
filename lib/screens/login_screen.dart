@@ -6,9 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'home_screen.dart';
 
 class Login extends StatefulWidget {
-  final String email;
-  final String password;
-  const Login({super.key, required this.email, required this.password});
+  final String? email;
+  final String? password;
+  const Login({super.key, this.email, this.password});
 
   @override
   State<Login> createState() => _LoginState();
