@@ -1,16 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:first_project/models/note_model.dart';
+import 'package:first_project/models/user_model.dart';
 import 'package:first_project/repository/notes_repo.dart';
 import 'package:flutter/material.dart';
-
 import '../core/service/notes_service.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final UserModel userModel;
+  const HomeScreen({super.key, required this.userModel});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+/// user specific data read
+/// automatic login through fingerprint
 
 class _HomeScreenState extends State<HomeScreen> {
   late final NotesRepo notesRepo;
@@ -27,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void addNote(String title, String content, [bool isPinned = false]){
-    notesRepo.addNote(title: title, content: content, isPinned: isPinned, userId: '');
+    notesRepo.addNote(title: title, content: content, isPinned: isPinned, userId: widget.userModel.uid);
   }
 
   void updateNote(NoteModel noteModel){

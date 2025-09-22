@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_project/core/service/auth_service.dart';
 import 'package:first_project/repository/auth_repo.dart';
 import 'package:first_project/screens/login_screen.dart';
 import 'package:first_project/widgets/button.dart';
@@ -13,8 +14,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-
-  final AuthRepo authRepo = AuthRepo();
+  final AuthRepo authRepo = AuthRepo(authService: AuthService());
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 

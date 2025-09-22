@@ -8,12 +8,12 @@ class AuthService {
     await _auth.createUserWithEmailAndPassword(email: email, password: password);
   }
 
-  Future<bool> signIn(String email, String password) async {
+  Future<UserCredential?> signIn(String email, String password) async {
     try{
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return true;
+      return await _auth.signInWithEmailAndPassword(email: email, password: password);
     }catch(e){
-      return false;
+      print("Error: $e");
+      return null;
     }
   }
 }

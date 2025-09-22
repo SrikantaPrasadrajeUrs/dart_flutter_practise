@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:first_project/core/service/auth_service.dart';
+import 'package:first_project/models/user_model.dart';
 import 'package:first_project/repository/auth_repo.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +17,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
-  final AuthRepo authRepo = AuthRepo();
+  final AuthRepo authRepo = AuthRepo(authService: AuthService());
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -30,9 +31,9 @@ class _LoginState extends State<Login> {
 
   void login()async{
     if(formKey.currentState!.validate()){
-      final isLoggedIn = await authRepo.login(email: emailController.text, password: passwordController.text);
-      if(isLoggedIn){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
+      final userdata = await authRepo.login(email: emailController.text, password: passwordController.text);
+      if(userdata!=null){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen(userModel: userdata)));
       }
     }
   }

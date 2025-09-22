@@ -22,7 +22,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_)async{
       final isAuthenticated = await bioMetricService.authenticate();
       if(isAuthenticated){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
       }
     });
   }
