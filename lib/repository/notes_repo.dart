@@ -6,16 +6,17 @@ class NotesRepo {
 
   NotesRepo({required NotesService notesService}):_notesService=notesService;
 
-  Stream<List<NoteModel>>? getNotes() {
+  Stream<List<NoteModel>>? getNotes(String userId) {
     return _notesService.getNotes().map(
       (snapshot) =>
           snapshot.docs.map((doc) {
             Map<String, dynamic> data = doc.data();
             data["id"] = doc.id;
             return NoteModel.fromMap(data);
-          }).toList(),
+          }).where((note)=>note.userId==userId).toList(),
     );
   }
+  //fruits = [apple, banana, orange] => [apple, orange] where((fruit)=>fruit!="banana")
 
   void addNote({
     required String title,

@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text("Notes app"),
       ),
       body: StreamBuilder<List<NoteModel>>(
-          stream: notesRepo.getNotes(),
+          stream: notesRepo.getNotes(widget.userModel!.uid),
           builder: (context, snapshot){
             if(snapshot.hasData){
               return ListView.builder(
