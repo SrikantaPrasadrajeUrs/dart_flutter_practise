@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/core/service/auth_service.dart';
+import 'package:first_project/core/service/user_service.dart';
 import 'package:first_project/models/user_model.dart';
 import 'package:first_project/repository/auth_repo.dart';
 import 'package:first_project/widgets/button.dart';
@@ -33,9 +34,38 @@ class _LoginState extends State<Login> {
     if(formKey.currentState!.validate()){
       final userdata = await authRepo.login(email: emailController.text, password: passwordController.text);
       if(userdata!=null){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen(userModel: userdata)));
+        showEnableBiometric(userdata.uid);
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen(userModel: userdata)));
       }
     }
+  }
+
+
+  void showEnableBiometric(String uid){
+    showDialog(context: context, builder: (context){
+      return Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Enabled biometrix"),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(onPressed: (){
+                    UserService().addOrUpdateUser(uid,isBiometricEnabled: true);
+                  }, child: Text("Enable")),
+                  SizedBox(width: 10),
+                  ElevatedButton(onPressed: (){}, child: Text("Disable")),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   String? validate(String? str, {String fieldType = "email"}){
@@ -53,18 +83,6 @@ class _LoginState extends State<Login> {
       }
     }
     return null;
-  }
-
-  void login1() async {
-    print(
-      "email: ${emailController.text}, password: ${passwordController.text}",
-    );
-    final instance = FirebaseAuth.instance;
-    final user = await instance.signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    );
-    print("logged in successfully $user");
   }
 
   @override

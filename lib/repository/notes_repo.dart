@@ -16,7 +16,6 @@ class NotesRepo {
           }).where((note)=>note.userId==userId).toList(),
     );
   }
-  //fruits = [apple, banana, orange] => [apple, orange] where((fruit)=>fruit!="banana")
 
   void addNote({
     required String title,
