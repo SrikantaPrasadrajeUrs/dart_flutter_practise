@@ -1,5 +1,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:first_project/models/user_model.dart';
 
 class UserService{
   final database = FirebaseFirestore.instance;
@@ -20,8 +21,12 @@ class UserService{
         });
       }
     }catch(e){
-
+      print("Error: $e");
     }
   }
 
+  Future<UserModel?> getUserDataById(String uid)async{
+    final documentSnapshot = await users.doc(uid).get();
+    return UserModel(uid: documentSnapshot.data()!['id'], isBiometricEnabled: documentSnapshot.data()!['isBiometricEnabled']);
+  }
 }

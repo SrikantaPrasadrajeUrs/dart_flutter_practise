@@ -15,7 +15,7 @@ class AuthRepo{
   Future<UserModel?> login({required String email, required String password})async{
     final userData = await _authService.signIn(email, password);
     if(userData!=null){
-      final UserModel userModel = UserModel(uid: userData.user?.uid??"", email: email);
+      final UserModel userModel = UserModel(uid: userData.user?.uid??"", isBiometricEnabled: false);
       return userModel;
     }
     return null;

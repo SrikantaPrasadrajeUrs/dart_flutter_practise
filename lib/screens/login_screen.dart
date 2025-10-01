@@ -1,11 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/core/service/auth_service.dart';
+import 'package:first_project/core/service/local_storage_service.dart';
 import 'package:first_project/core/service/user_service.dart';
-import 'package:first_project/models/user_model.dart';
 import 'package:first_project/repository/auth_repo.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'home_screen.dart';
 
 class Login extends StatefulWidget {
@@ -30,55 +30,68 @@ class _LoginState extends State<Login> {
     passwordController = TextEditingController(text: widget.password);
   }
 
-  void login()async{
-    if(formKey.currentState!.validate()){
-      final userdata = await authRepo.login(email: emailController.text, password: passwordController.text);
-      if(userdata!=null){
+  void login() async {
+    if (formKey.currentState!.validate()) {
+      final userdata = await authRepo.login(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      if (userdata != null) {
         showEnableBiometric(userdata.uid);
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen(userModel: userdata)));
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen(userModel: userdata)));
       }
     }
   }
 
+  void showEnableBiometric(String uid) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Enable biometric"),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        UserService().addOrUpdateUser(
+                          uid,
+                          isBiometricEnabled: true,
+                        );
+                        LocalStorageService().storeUserId(uid);
 
-  void showEnableBiometric(String uid){
-    showDialog(context: context, builder: (context){
-      return Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Enabled biometrix"),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(onPressed: (){
-                    UserService().addOrUpdateUser(uid,isBiometricEnabled: true);
-                  }, child: Text("Enable")),
-                  SizedBox(width: 10),
-                  ElevatedButton(onPressed: (){}, child: Text("Disable")),
-                ],
-              )
-            ],
+                      },
+                      child: Text("Enable"),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(onPressed: () {}, child: Text("Disable")),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
-  String? validate(String? str, {String fieldType = "email"}){
-    if(str == null || str.isEmpty){
+  String? validate(String? str, {String fieldType = "email"}) {
+    if (str == null || str.isEmpty) {
       return "$fieldType is required";
     }
-    if(fieldType == "email"){
-      if(!str.contains("@")){
+    if (fieldType == "email") {
+      if (!str.contains("@")) {
         return "Invalid $fieldType";
       }
     }
-    if(fieldType == "password"){
-      if(str.length < 6){
+    if (fieldType == "password") {
+      if (str.length < 6) {
         return "Password must be at least 6 characters";
       }
     }
@@ -126,13 +139,13 @@ class _LoginState extends State<Login> {
               Spacer(),
               TextFormField(
                 controller: emailController,
-                validator: (str)=>validate(str,fieldType:"email"),
+                validator: (str) => validate(str, fieldType: "email"),
                 decoration: InputDecoration(hintText: "Email address"),
               ),
               SizedBox(height: 30),
               TextFormField(
                 controller: passwordController,
-                validator: (str)=>validate(str,fieldType: "password"),
+                validator: (str) => validate(str, fieldType: "password"),
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: "Password",

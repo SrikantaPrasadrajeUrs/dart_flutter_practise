@@ -1,14 +1,14 @@
 class UserModel{
   final String uid;
-  final String email;
+  final bool isBiometricEnabled;
 
   UserModel({
     required this.uid,
-    required this.email,
+    required this.isBiometricEnabled,
   });
 
   @override
   String toString() {
-    return "email: $email, uid: $uid";
+    return "isBiometricEnabled: $isBiometricEnabled, uid: $uid";
   }
 }

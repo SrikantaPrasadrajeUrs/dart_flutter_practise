@@ -1,9 +1,11 @@
+import 'package:first_project/core/service/user_service.dart';
 import 'package:first_project/screens/home_screen.dart';
 import 'package:first_project/screens/register.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/service/biometric_service.dart';
+import '../core/service/local_storage_service.dart';
 import 'login_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -20,9 +22,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_)async{
-      final isAuthenticated = await bioMetricService.authenticate();
-      if(isAuthenticated){
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
+      final String? uid = await LocalStorageService().getUserId();
+      if(uid!=null){
+        final userData = await UserService().getUserDataById(uid);
+        if(userData!=null&& userData.isBiometricEnabled) {
+          final isAuthenticated = await bioMetricService.authenticate();
+          if(isAuthenticated){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen(userModel: userData)));
+          }
+        }
       }
     });
   }

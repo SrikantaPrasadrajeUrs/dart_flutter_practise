@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     notesRepo = NotesRepo(notesService: NotesService());
   }
 
-  void addNote(String title, String content, [bool isPinned = false]){
+  void addNote(String title, String content, bool isPinned){
     notesRepo.addNote(title: title, content: content, isPinned: isPinned, userId: widget.userModel.uid);
   }
 
@@ -42,40 +42,51 @@ class _HomeScreenState extends State<HomeScreen> {
   void addOrUpdateNote({NoteModel? noteModel, String actionType = "ADD"}){
     titleController.text = noteModel?.title??"";
     contentController.text = noteModel?.content??"";
+    bool isPinned = noteModel?.isPinned??false;
     showDialog(
         context: context,
         builder:(context)=>
-            AlertDialog(
-              title: Text("$actionType note"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    decoration: InputDecoration(
-                        hintText: "Enter title"
-                    ),
-                    controller: titleController,
+            StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text("$actionType note"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                            hintText: "Enter title"
+                        ),
+                        controller: titleController,
+                      ),
+                      TextField(
+                        decoration: InputDecoration(
+                            hintText: "Enter content"
+                        ),
+                        controller: contentController,
+                      ),
+                      Switch(
+                        value: isPinned,
+                        onChanged: (value){
+                          setState(()=>isPinned = value);
+                        },
+                      ),
+                      ElevatedButton(
+                          onPressed: (){
+                              if(actionType == "ADD"){
+                                addNote(titleController.text, contentController.text, isPinned);
+                              }else{
+                                if(noteModel==null) return;
+                                  noteModel = noteModel!.copyWith(title: titleController.text, content: contentController.text, isPinned: isPinned);
+                                  updateNote(noteModel!);
+                              }
+                          },
+                          child: Text(actionType)
+                      )
+                    ],
                   ),
-                  TextField(
-                    decoration: InputDecoration(
-                        hintText: "Enter content"
-                    ),
-                    controller: contentController,
-                  ),
-                  ElevatedButton(
-                      onPressed: (){
-                          if(actionType == "ADD"){
-                            addNote(titleController.text, contentController.text);
-                          }else{
-                            if(noteModel==null) return;
-                              noteModel = noteModel!.copyWith(title: titleController.text, content: contentController.text);
-                              updateNote(noteModel!);
-                          }
-                      },
-                      child: Text(actionType)
-                  )
-                ],
-              ),
+                );
+              }
             )
     );
   }
@@ -92,6 +103,15 @@ class _HomeScreenState extends State<HomeScreen> {
           stream: notesRepo.getNotes(widget.userModel!.uid),
           builder: (context, snapshot){
             if(snapshot.hasData){
+              // [note, note] -> [note.isPinned, note.isPinned] -> [false, true] -> [true, false]
+              snapshot.data!.sort((a,b){
+                if(a.isPinned && !b.isPinned){
+                  return -1;
+                }else if(!a.isPinned && b.isPinned){
+                  return 1;
+                }
+                return 0;
+              });
               return ListView.builder(
                   itemCount: snapshot.data!.length, // list
                   itemBuilder: (context, index){
@@ -116,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                         title: Text(note.title),
                         subtitle: Text(note.content),
+                        trailing: note.isPinned?Icon(Icons.pin_drop):null,
                       ),
                     );
                   }
