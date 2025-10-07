@@ -22,6 +22,8 @@ class _LoginState extends State<Login> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool obscurePassword = true;
+  FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -141,17 +143,30 @@ class _LoginState extends State<Login> {
                 controller: emailController,
                 validator: (str) => validate(str, fieldType: "email"),
                 decoration: InputDecoration(hintText: "Email address"),
+                autofocus: true,
+                onFieldSubmitted: (_){
+                  focusNode.requestFocus();
+                },
               ),
               SizedBox(height: 30),
               TextFormField(
+                focusNode: focusNode,
                 controller: passwordController,
                 validator: (str) => validate(str, fieldType: "password"),
-                obscureText: true,
+                obscureText: obscurePassword,
                 decoration: InputDecoration(
                   hintText: "Password",
-                  suffixIcon: Icon(
-                    Icons.remove_red_eye_outlined,
-                    color: Colors.black38,
+                  suffixIcon: GestureDetector(
+                    onTap: ()async{
+                      if(obscurePassword){
+                        setState(() => obscurePassword=false);
+                        Future.delayed(Duration(seconds: 2),()=>setState(() => obscurePassword=true));
+                      }
+                    },
+                    child: Icon(
+                      Icons.remove_red_eye_outlined,
+                      color: Colors.black38,
+                    ),
                   ),
                 ),
               ),

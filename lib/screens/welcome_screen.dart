@@ -41,12 +41,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final style1 = GoogleFonts.ptSans(
+    final style1 = GoogleFonts.arima(
       fontSize: 26,
       color: Colors.black,
       fontWeight: FontWeight.w600,
     );
-    final style2 = GoogleFonts.ptSans(
+    final style2 = GoogleFonts.arima(
       fontSize: 16,
       color: Colors.grey.shade600,
     );
@@ -59,12 +59,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(45),
-                child: Image.asset(
-                  "assets/images/notes.jpg",
-                  height: 370,
-                  fit: BoxFit.fill,
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.yellow, width: 2),
+                  borderRadius: BorderRadius.circular(185),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: .1),
+                      blurRadius: 7,
+                      spreadRadius: 3
+                    )
+                  ]
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(185),
+                  child: Image.asset(
+                    "assets/images/welcome_image.jpg",
+                    height: 370,
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
               Spacer(),

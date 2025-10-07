@@ -103,11 +103,13 @@ class _HomeScreenState extends State<HomeScreen> {
           stream: notesRepo.getNotes(widget.userModel!.uid),
           builder: (context, snapshot){
             if(snapshot.hasData){
+              /// [2,3,1,4,5] -> [1,2,3,4,5], [5,4,3,2,1]
+              /// [false, true, false] -> [true, false, false]
               // [note, note] -> [note.isPinned, note.isPinned] -> [false, true] -> [true, false]
               snapshot.data!.sort((a,b){
-                if(a.isPinned && !b.isPinned){
+                if(a.isPinned==true && b.isPinned==false){
                   return -1;
-                }else if(!a.isPinned && b.isPinned){
+                }else if(a.isPinned==false && b.isPinned==true){
                   return 1;
                 }
                 return 0;
