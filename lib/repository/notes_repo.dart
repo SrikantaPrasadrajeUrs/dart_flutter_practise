@@ -42,8 +42,8 @@ class NotesRepo {
   }
 
   void delete({
-    required NoteModel note
+    required String id
   }) {
-    return _notesService.deleteNote(note.id);
+    return _notesService.deleteNote(id);
   }
 }
