@@ -39,6 +39,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Login(email: '',)));
   }
 
+  bool isRound = false;
+
   @override
   Widget build(BuildContext context) {
     final style1 = GoogleFonts.arima(
@@ -91,6 +93,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               Text("more, and watch as they are transcribed", style: style2),
               Text("accurate text. Instantly", style: style2),
+              // AnimatedOpacity(
+              //   opacity: isRound? 1:0,
+              //   duration: const Duration(seconds: 1),
+              //   child: AnimatedContainer(
+              //     duration: const Duration(seconds: 1),
+              //     height: 100,
+              //     width: 100,
+              //     decoration: BoxDecoration(
+              //       color: Colors.blue,
+              //       borderRadius: isRound? BorderRadius.circular(50):null
+              //     ),
+              //   ),
+              // ),
+              AnimatedSwitcher(
+                  duration: const Duration(seconds: 1),
+                  transitionBuilder: (child, animation){
+                    return ScaleTransition(scale: animation, child: child);
+                  },
+                child: Text(key: ValueKey<bool>(isRound),"$isRound", style: TextStyle(fontSize: 30),),
+              ),
               Spacer(flex: 2),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -100,9 +122,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     text: "Register",
                     textStyle: TextStyle(color: Colors.white, fontSize: 14),
                     onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => Register()),
-                      );
+                      setState(() {
+                        isRound = !isRound;
+                      });
                     },
                   ),
                   Button(
