@@ -1,6 +1,5 @@
 import 'package:first_project/core/service/user_service.dart';
 import 'package:first_project/screens/home_screen.dart';
-import 'package:first_project/screens/register.dart';
 import 'package:first_project/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,12 +14,23 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProviderStateMixin{
   final BiometricService bioMetricService = BiometricService();
+  // AnimationController
+  // Animation
+ late AnimationController controller;
+ late Animation<Offset> animation;
+
+
 
   @override
   void initState() {
     super.initState();
+    // forward() 0-1
+    controller = AnimationController(vsync: this, duration: Duration(seconds: 2));
+    animation = Tween<Offset>(begin: Offset.zero, end: Offset(2, 0)).animate(
+      CurvedAnimation(parent: controller, curve: Curves.easeIn)
+    );
     WidgetsBinding.instance.addPostFrameCallback((_)async{
       final String? uid = await LocalStorageService().getUserId();
       if(uid!=null){
@@ -39,7 +49,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Login(email: '',)));
   }
 
-  bool isRound = false;
+  bool isVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -93,51 +103,65 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               Text("more, and watch as they are transcribed", style: style2),
               Text("accurate text. Instantly", style: style2),
-              // AnimatedOpacity(
-              //   opacity: isRound? 1:0,
-              //   duration: const Duration(seconds: 1),
-              //   child: AnimatedContainer(
-              //     duration: const Duration(seconds: 1),
-              //     height: 100,
-              //     width: 100,
-              //     decoration: BoxDecoration(
-              //       color: Colors.blue,
-              //       borderRadius: isRound? BorderRadius.circular(50):null
-              //     ),
-              //   ),
-              // ),
-              AnimatedSwitcher(
-                  duration: const Duration(seconds: 1),
-                  transitionBuilder: (child, animation){
-                    return ScaleTransition(scale: animation, child: child);
-                  },
-                child: Text(key: ValueKey<bool>(isRound),"$isRound", style: TextStyle(fontSize: 30),),
-              ),
               Spacer(flex: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Button(
-                    backgroundColor: Colors.indigoAccent,
-                    text: "Register",
-                    textStyle: TextStyle(color: Colors.white, fontSize: 14),
-                    onPressed: () {
-                      setState(() {
-                        isRound = !isRound;
-                      });
-                    },
-                  ),
-                  Button(
-                    backgroundColor: Colors.white,
-                    text: "Sign in",
-                    textStyle: TextStyle(
-                      color: Colors.indigoAccent,
-                      fontSize: 14,
+              AnimatedOpacity(
+                opacity: isVisible?1:0,
+                duration: const Duration(seconds: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Button(
+                      backgroundColor: Colors.indigoAccent,
+                      text: "Register",
+                      textStyle: TextStyle(color: Colors.white, fontSize: 14),
+                      onPressed: () {
+
+                      },
                     ),
-                    onPressed: navigateToLogin,
-                  ),
-                ],
+                    Button(
+                      backgroundColor: Colors.white,
+                      text: "Sign in",
+                      textStyle: TextStyle(
+                        color: Colors.indigoAccent,
+                        fontSize: 14,
+                      ),
+                      onPressed: navigateToLogin,
+                    ),
+                  ],
+                ),
               ),
+              AnimatedBuilder(
+                animation: animation,
+                builder: (context,_) {
+                  return SlideTransition(
+                    position: animation,
+                    child: GestureDetector(
+                      onTap: (){
+                        if(controller.isCompleted){
+                          setState(() {
+                            isVisible = false;
+                          });
+                          controller.reverse().then((_)=>controller.reset());
+                        }else {
+                          setState(() {
+                            isVisible = true;
+                          });
+                          controller.forward();
+                        }
+                      },
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.yellow,
+                          borderRadius: BorderRadius.circular(50)
+                        ),
+                        child: Icon(Icons.arrow_forward_ios),
+                      ),
+                    ),
+                  );
+                }
+              )
             ],
           ),
         ),
